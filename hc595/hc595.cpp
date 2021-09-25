@@ -46,16 +46,16 @@ void hc595::clear()
 
 inline void hc595::_begin()
 {
-    asm volatile("nop \n nop \n nop");
+    // asm volatile("nop \n nop \n nop");
     gpio_put(this->_stclk, 0);  // Active low
-    asm volatile("nop \n nop \n nop");
+    // asm volatile("nop \n nop \n nop");
 }
 
 inline void hc595::_out()
 {
-    asm volatile("nop \n nop \n nop");
+    // asm volatile("nop \n nop \n nop");
     gpio_put(this->_stclk, 1);
-    asm volatile("nop \n nop \n nop");
+    // asm volatile("nop \n nop \n nop");
 }
 
 hc595::~hc595()
