@@ -47,6 +47,7 @@ target_link_libraries(led_cube pico_stdlib)
 # Add any user requested libraries
 target_link_libraries(led_cube
         hardware_i2c
+        hardware_spi
         pico_multicore
         )
 
