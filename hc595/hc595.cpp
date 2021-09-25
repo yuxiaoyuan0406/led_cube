@@ -5,95 +5,57 @@
 #include <stdio.h>
 #endif // _DEBUG
 
-static uint default_baudrate = 400 * 1000;
-static uint sleep_time = 2;
-
-hc595::hc595(uint ser, uint srclk, uint rclk, size_t count) : _link_count(count), _ser(ser), _srclk(srclk), _rclk(rclk)
+hc595::hc595(spi_inst_t *spi, uint ds, uint shclk, uint stclk, size_t count) : _link_count(count), _ds(ds), _shclk(shclk), _stclk(stclk), _spi(spi)
 {
-    //     if (this->_i2c_port->hw->enable == 0)
-    //     {
-    // #ifdef _DEBUG
-    //         printf("I2C port initializing...\r\n");
-    // #endif // _DEBUG
-    //         i2c_init(this->_i2c_port, default_baudrate);
-    //         gpio_set_function(this->_ser, GPIO_FUNC_I2C);
-    //         gpio_set_function(this->_srclk, GPIO_FUNC_I2C);
-    //         gpio_pull_up(this->_ser);
-    //         gpio_pull_up(this->_srclk);
-    //     }
-    // #ifdef _DEBUG
-    //     else
-    //     {
-    //         printf("I2C port already initialized.\r\n");
-    //     }
-    // #endif // _DEBUG
-    gpio_init(this->_ser);
-    gpio_init(this->_srclk);
-    gpio_set_dir(this->_ser, GPIO_OUT);
-    gpio_set_dir(this->_srclk, GPIO_OUT);
-    gpio_put(this->_ser, 0);
-    gpio_put(this->_srclk, 0);
+    // spi functoin pins init
+    spi_init(this->_spi, DEFAULT_SPI_BAUDRATE);
+    gpio_set_function(this->_ds, GPIO_FUNC_SPI);    // mosi
+    gpio_set_function(this->_shclk, GPIO_FUNC_SPI); // sck
 
-    gpio_init(this->_rclk);
-    gpio_set_dir(this->_rclk, GPIO_OUT);
-    gpio_put(this->_rclk, 0);
+    gpio_init(this->_stclk);                        // cs
+    gpio_set_dir(this->_stclk, GPIO_OUT);
+    gpio_put(this->_stclk, 1);
 
     // this->clear();
 }
 
 void hc595::write(const uint8_t *buf)
 {
-    gpio_put(this->_rclk, 0);
+    this->_begin();
     this->_write_raw(buf);
     this->_out();
 }
 
 inline void hc595::_write_raw(const uint8_t *src)
 {
-    for (size_t i = 0; i < this->_link_count; i++)
-    {
-        uint8_t val = *(src + i);
-        // char buffer[32];
-        // sprintf(buffer, "Writing 0x%02X\r\n", val);
-        // uart_puts(uart0, buffer);
-        // printf("Writing 0x%02X\n", val);
-        for (size_t j = 0; j < 8; j++)
-        {
-            gpio_put(this->_ser, val >> 7);
-            val = val << 1;
-            sleep_us(sleep_time);
-
-            gpio_put(this->_srclk, 1); // rise
-            sleep_us(sleep_time);
-            gpio_put(this->_srclk, 0);
-            sleep_us(sleep_time);
-        }
-    }
+    this->_begin();
+    spi_write_blocking(this->_spi, src, this->_link_count);
+    this->_out();
 }
 
 void hc595::clear()
 {
-    // uart_puts(uart0, "Clearing\r\n");
-    gpio_put(this->_rclk, 0);
-    for (size_t i = 0; i < 1 + 8 * this->_link_count; i++)
+    auto buf = new uint8_t[this->_link_count];
+    for (int i = 0; i < this->_link_count; i++)
     {
-        gpio_put(this->_ser, 0);
-        sleep_us(sleep_time);
-
-        gpio_put(this->_srclk, 1); // rise
-        sleep_us(sleep_time);
-        gpio_put(this->_srclk, 0);
-        sleep_us(sleep_time);
+        buf[i] = 0x00;
     }
-    this->_out();
+    this->_write_raw(buf);
+    delete[] buf;
+}
+
+inline void hc595::_begin()
+{
+    asm volatile("nop \n nop \n nop");
+    gpio_put(this->_stclk, 0);  // Active low
+    asm volatile("nop \n nop \n nop");
 }
 
 inline void hc595::_out()
 {
-    // sleep_us(sleep_time);
-    gpio_put(this->_rclk, 1); // rise
-    sleep_us(sleep_time);
-    gpio_put(this->_rclk, 0);
+    asm volatile("nop \n nop \n nop");
+    gpio_put(this->_stclk, 1);
+    asm volatile("nop \n nop \n nop");
 }
 
 hc595::~hc595()
