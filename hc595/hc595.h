@@ -31,9 +31,9 @@ private:
 
 public:
     /*! \brief  Create a 74hc595 link object on a specified i2c port. 
-    * \param ser GPIO number to ser pin on 595. default = PICO_DEFAULT_I2C_SDA_PIN
-    * \param srclk GPIO number to srclk pin on 595. default = PICO_DEFAULT_I2C_SCL_PIN
-    * \param rclk GPIO number to RCLK pin on 595. default = 3
+    * \param ser GPIO number to DS `serail data input` pin on 595. default = PICO_DEFAULT_I2C_SDA_PIN
+    * \param srclk GPIO number to SH_CP `shift register clock input` pin on 595. default = PICO_DEFAULT_I2C_SCL_PIN
+    * \param rclk GPIO number to ST_CP `storage register clock input` pin on 595. default = 3
     * \param count The count of 595 link. default = 1
     */
     hc595(uint ser = PICO_DEFAULT_I2C_SDA_PIN,
