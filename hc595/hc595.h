@@ -49,9 +49,9 @@ public:
     * \param count The count of 595 link. default = 1
     */
     hc595(spi_inst_t *spi = PICO_DEFAULT_SPI, 
-          uint ds = PICO_DEFAULT_I2C_SDA_PIN,
-          uint shclk = PICO_DEFAULT_I2C_SCL_PIN,
-          uint stclk = 3,
+          uint ds = PICO_DEFAULT_SPI_MOSI,
+          uint shclk = PICO_DEFAULT_SPI_SCK,
+          uint stclk = PICO_DEFAULT_SPI_CS,
           size_t count = 1);
     /*! \brief  Write data to 595 from the buffer
     * \param buf Pointer to data array. Note: the size of the buffer MUST be longer than the count of the 595 chip in the link, or could lead to memory leak. 
