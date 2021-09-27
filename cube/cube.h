@@ -9,9 +9,10 @@ private:
     volatile bool _render_lock;
 
 public:
-    cube(uint ser = PICO_DEFAULT_I2C_SDA_PIN,
-         uint srclk = PICO_DEFAULT_I2C_SCL_PIN,
-         uint rclk = 3);
+    cube(spi_inst_t *spi,
+         uint ds = PICO_DEFAULT_SPI_MOSI,
+         uint shclk = PICO_DEFAULT_SPI_SCK,
+         uint stclk = PICO_DEFAULT_SPI_CS);
     ~cube();
     void render();
     // todo

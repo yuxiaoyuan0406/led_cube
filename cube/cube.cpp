@@ -1,8 +1,8 @@
 #include "cube.h"
 #include "pico/time.h"
 
-cube::cube(uint ser, uint srclk, uint rclk)
-    : hc595(ser, srclk, rclk, 9), cube_frame()
+cube::cube(spi_inst_t *spi, uint ds, uint shclk, uint stclk)
+    : hc595(spi, ds, shclk, stclk, 9), cube_frame()
 {
     this->cube_frame::clear();
     this->hc595::clear();
