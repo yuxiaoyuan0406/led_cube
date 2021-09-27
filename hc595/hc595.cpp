@@ -60,4 +60,5 @@ inline void hc595::_out()
 
 hc595::~hc595()
 {
+    spi_deinit(this->_spi);
 }
