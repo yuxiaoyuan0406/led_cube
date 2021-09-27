@@ -2,7 +2,7 @@
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
 #include "hc595/hc595.h"
-#include "cube/cube_data.h"
+// #include "cube/cube_data.h"
 
 int main()
 {
@@ -16,10 +16,10 @@ int main()
     gpio_init(25);
     gpio_set_dir(25, GPIO_OUT);
 
-    uint SER = 4,
-         SRCLK = 5,
-         RCLK = 3;
-    size_t count = 2;
+    uint DS = 3,        // MOSI
+         SHCLK = 2,     // SCK
+         STCLK = 5;     // CS
+    size_t count = 1;
 
     uint8_t frams[][2] = {
         0x00, 0x01,
@@ -40,12 +40,12 @@ int main()
         0x01<<7, 0x00,
         };
 
-    hc595 led(SER, SRCLK, RCLK, count);
+    hc595 led(spi0, DS, SHCLK, STCLK, count);
     multicore_launch_core1([]{
         while (1)
         {
             gpio_put(25, 1);
-            sleep_ms(100);
+            sleep_ms(50);
             gpio_put(25, 0);
             sleep_ms(300);
         }
@@ -53,14 +53,15 @@ int main()
 
     while (1)
     {
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 8; i++)
         {
+            uint8_t val = 0x01 << i;
             // gpio_put(25, 1);
             // led.clear();
-            led.write(frams[i]);
+            led.write(&val);
             // sleep_ms(20);
             // gpio_put(25, 0);
-            sleep_ms(10);
+            // sleep_ms(10);
         }
         // led.clear();
         // sleep_ms(100);

@@ -23,7 +23,7 @@ pico_sdk_init()
 
 # Add your own include directories
 include_directories(./hc595
-    ./cube
+    # ./cube
 )
 
 # Add executable. Default name is the project name, version 0.1
@@ -31,8 +31,8 @@ include_directories(./hc595
 add_executable(led_cube 
     led_cube.cpp 
     hc595/hc595.cpp
-    cube/cube_data.cpp
-    cube/cube.cpp
+    # cube/cube_data.cpp
+    # cube/cube.cpp
 )
 
 pico_set_program_name(led_cube "led_cube")
@@ -47,6 +47,7 @@ target_link_libraries(led_cube pico_stdlib)
 # Add any user requested libraries
 target_link_libraries(led_cube
         hardware_i2c
+        hardware_spi
         pico_multicore
         )
 
