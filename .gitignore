@@ -33,6 +33,7 @@
 
 # VS Code settings
 .vscode
+!.vscode/settings.json
 
 # Build directory
 build
