@@ -29,15 +29,16 @@ private:
     uint _shclk;        // shift register clock input
     uint _stclk;        // storage register clock input
     spi_inst_t *_spi;   // spi port
+
     /*! \brief  write the buffer to 595. It takes 3*sleep_time us to send every byte of data. In this case, 6 us/B
     * \param src buffer to write
     */
     inline void _write_raw(const uint8_t *src);
-    /*! \brief  begin transmission
-    */
+
+    /*! \brief  begin transmission */
     inline void _begin();
-    /*! \brief  send a rise to storage register clock input, move the data to output
-    */
+
+    /*! \brief  send a rise to storage register clock input, move the data to output */
     inline void _out();
 
 public:
@@ -53,12 +54,13 @@ public:
           uint shclk = PICO_DEFAULT_SPI_SCK,
           uint stclk = PICO_DEFAULT_SPI_CS,
           size_t count = 1);
+
     /*! \brief  Write data to 595 from the buffer
-    * \param buf Pointer to data array. Note: the size of the buffer MUST be longer than the count of the 595 chip in the link, or could lead to memory leak. 
+    * \param buf Pointer to data array. Note: the size of the buffer MUST not be shorter than the count of the 595 chip in the link, or could lead to memory leak. 
     */
     void write(const uint8_t *buf);
-    /*! \brief  Clear all 595s
-    */
+
+    /*! \brief  Clear all 595s */
     void clear(void);
     ~hc595();
 };
