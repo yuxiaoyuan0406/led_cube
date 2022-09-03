@@ -1,0 +1,3 @@
+[submodule "pico-hc595"]
+	path = hc595
+	url = git@github.com:yuxiaoyuan0406/pico-hc595
